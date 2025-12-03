@@ -7,7 +7,6 @@ from collections import defaultdict
 from threading import Thread
 import telebot
 import instaloader
-from flask import Flask
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -15,23 +14,6 @@ load_dotenv()
 
 # Configure logging
 logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-# Flask app to keep the bot alive
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "I'm alive"
-
-def run_flask_app():
-    app.run(host='0.0.0.0', port=8080)
-
-def keep_alive():
-    t = Thread(target=run_flask_app)
-    t.start()
-
-# Start the Flask app in a thread 
-keep_alive()
 
 # Initialize the Telegram bot
 API_TOKEN = os.getenv("API_TOKEN")
@@ -264,7 +246,7 @@ def help_callback(call):
     help_text = "Here's how you can use this bot:\n\n"
     help_text += "/getmeth <username> - Analyze an Instagram profile.\n"
     help_text += "Make sure you are a member of the channel to use this bot."
-    
+
     # Escape special characters for MarkdownV2
     help_text = escape_markdown_v2(help_text)
 
@@ -274,9 +256,4 @@ def help_callback(call):
 if __name__ == "__main__":
     print("Starting the bot...")
     logging.info("Bot started.")
-    
-    # Start the bot polling in a separate thread
-    t = Thread(target=bot.polling)
-    t.start()
-
-
+    bot.polling()
